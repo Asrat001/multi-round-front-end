@@ -32,30 +32,8 @@ This is a multiplayer game where players join a room and compete in multiple rou
    pnpm install
    ```
 
-### Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
 
-2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
 
-## Running the Application
-
-### Backend Server
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Start the server:
-   ```bash
-   pnpm start
-   ```
-   The server will start on port 3000 by default.
 
 ### Frontend Application
 1. In a new terminal, navigate to the project root:
