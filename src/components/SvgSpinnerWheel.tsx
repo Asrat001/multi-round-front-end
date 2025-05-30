@@ -33,7 +33,6 @@ export const SvgSpinnerWheel: React.FC<SvgSpinnerWheelProps> = ({
 }) => {
   const [rotation, setRotation] = React.useState(0);
   const [isSpinning, setIsSpinning] = React.useState(false);
-  const prevSpinning = useRef(false);
 
   // Reset rotation to 0 and isSpinning to false before each spin, then start spin after a short delay
   useEffect(() => {

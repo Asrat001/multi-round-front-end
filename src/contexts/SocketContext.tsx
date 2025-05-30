@@ -27,7 +27,19 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
   const connect = (playerName: string) => {
     const newSocket = io('https://multi-round-point-backend.onrender.com', {
-      query: { playerName }
+      query: { playerName },
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 10000,
+      withCredentials: false,
+      autoConnect:true,
+      forceNew:true,
+      path:'/socket.io/',
+      extraHeaders: {
+        'Access-Control-Allow-Origin': '*'
+      }
     });
 
     newSocket.on('connect', () => {
@@ -43,7 +55,8 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       setCurrentPlayerId(null);
     });
 
-    newSocket.on('connect_error', () => {
+    newSocket.on('connect_error', (err) => {
+      console.error('Connection error:', err);
       setError('Failed to connect to the game server. Please try again later.');
     });
 
