@@ -26,7 +26,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   const connect = (playerName: string) => {
-    const newSocket = io('https://multi-round-point-backend.onrender.com', {
+    const newSocket = io('https://multi-round-point-backend-production.up.railway.app', {
       query: { playerName },
       transports: ['websocket', 'polling'],
       reconnection: true,

@@ -72,7 +72,7 @@ This is a multiplayer game where players join a room and compete in multiple rou
 ## Configuration and Hardcoded Values
 
 ### Frontend
-- Default backend URL: `https://multi-round-point-backend.onrender.com`
+- Default backend URL: `https://multi-round-point-backend.onrender.com or https://multi-round-point-backend-production.up.railway.app`
 - Socket.IO connection timeout: 20 seconds
 - Reconnection attempts: Infinite (with exponential backoff)
 - Wheel spin duration: 4000ms (4 seconds)
