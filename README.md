@@ -3,14 +3,14 @@
 A real-time multiplayer game where players compete in multiple rounds to accumulate points. Built with React, TypeScript, and Socket.IO.
 
 ## Author
-Asrat
+Asrat Adane
 
 ## Project Overview
 This is a multiplayer game where players join a room and compete in multiple rounds. The game features a spinning wheel that randomly selects winners for each round, with points being awarded to the winners. The game continues for a predetermined number of rounds, and the player with the most points at the end wins.
 
 ## Tech Stack
 - Frontend: React 19, TypeScript, Vite, Tailwind CSS
-- Backend: Node.js, Express, Socket.IO
+- Backend: Node.js, Nest js, Socket.IO
 - Package Manager: pnpm
 
 ## Prerequisites
@@ -32,30 +32,8 @@ This is a multiplayer game where players join a room and compete in multiple rou
    pnpm install
    ```
 
-### Backend Setup
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
 
-2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
 
-## Running the Application
-
-### Backend Server
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
-
-2. Start the server:
-   ```bash
-   pnpm start
-   ```
-   The server will start on port 3000 by default.
 
 ### Frontend Application
 1. In a new terminal, navigate to the project root:
