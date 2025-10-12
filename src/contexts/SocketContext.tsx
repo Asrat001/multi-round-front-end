@@ -1,11 +1,19 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
+interface TelegramUser {
+  id: number;
+  first_name: string;
+  last_name?: string;
+  username?: string;
+}
+
 interface SocketContextType {
   socket: Socket | null;
   isConnected: boolean;
   currentPlayerId: string | null;
-  connect: (playerName: string) => void;
+  telegramUser: TelegramUser | null;
+  connect: (telegramUser: TelegramUser) => void;
   disconnect: () => void;
   error: string | null;
 }
@@ -14,6 +22,7 @@ const SocketContext = createContext<SocketContextType>({
   socket: null,
   isConnected: false,
   currentPlayerId: null,
+  telegramUser: null,
   connect: () => {},
   disconnect: () => {},
   error: null,
@@ -23,6 +32,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [currentPlayerId, setCurrentPlayerId] = useState<string | null>(null);
+  const [telegramUser, setTelegramUser] = useState<TelegramUser | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const connect = (playerName: string) => {
@@ -34,12 +44,9 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       reconnectionDelay: 1000,
       timeout: 10000,
       withCredentials: false,
-      autoConnect:true,
-      forceNew:true,
-      path:'/socket.io/',
-      extraHeaders: {
-        'Access-Control-Allow-Origin': '*'
-      }
+      autoConnect: true,
+      forceNew: true,
+      path: '/socket.io/',
     });
 
     newSocket.on('connect', () => {
@@ -67,6 +74,9 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     if (socket) {
       socket.disconnect();
       setSocket(null);
+      setTelegramUser(null);
+      setCurrentPlayerId(null);
+      setIsConnected(false);
     }
   };
 
@@ -79,7 +89,15 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   }, [socket]);
 
   return (
-    <SocketContext.Provider value={{ socket, isConnected, currentPlayerId, connect, disconnect, error }}>
+    <SocketContext.Provider value={{
+      socket,
+      isConnected,
+      currentPlayerId,
+      telegramUser,
+      connect,
+      disconnect,
+      error
+    }}>
       {children}
     </SocketContext.Provider>
   );

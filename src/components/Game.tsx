@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSocket } from '../contexts/SocketContext';
-import { JoinGame } from './JoinGame';
+import { TelegramLogin } from './TelegramLogin';
 import { SvgSpinnerWheel } from './SvgSpinnerWheel';
 import toast, { Toaster } from 'react-hot-toast';
 import Confetti from 'react-confetti';
@@ -27,7 +27,7 @@ interface GameState {
 const COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5', '#9B59B6', '#3498DB'];
 
 export const Game = () => {
-  const { socket, isConnected, currentPlayerId, connect } = useSocket();
+  const { socket, isConnected, currentPlayerId, telegramUser } = useSocket();
   const [gameState, setGameState] = useState<GameState>({
     players: [],
     isGameActive: false,
@@ -37,7 +37,7 @@ export const Game = () => {
     roundWinner: null,
     gameStatus: 'waiting',
   });
-  const [error, setError] = useState<string>('');
+  const [gameError, setGameError] = useState<string>('');
   const [spinning, setSpinning] = useState(false);
   const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
@@ -47,6 +47,7 @@ export const Game = () => {
 
     socket.on('player_update', (data: { players: Player[] }) => {
       setGameState(prev => ({ ...prev, players: data.players }));
+      setGameError('');
     });
 
     socket.on('player_left', (data: { name: string }) => {
@@ -61,7 +62,7 @@ export const Game = () => {
         currentRound: 1,
         gameStatus: 'starting',
       }));
-      setError('');
+      setGameError('');
     });
 
     socket.on('new_round', (data: { round: number; totalRounds: number }) => {
@@ -72,9 +73,7 @@ export const Game = () => {
         players: prev.players.map(p => ({ ...p, isSpinning: true })),
         roundWinner: null,
       }));
-      // Randomly select a winner index for demo; replace with backend logic as needed
-      const winnerIdx = Math.floor(Math.random() * gameState.players.length);
-      setWinnerIndex(winnerIdx);
+      // Don't select winner locally - wait for server
       setSpinning(true);
     });
 
@@ -84,7 +83,10 @@ export const Game = () => {
         players: data.players.map(p => ({ ...p, isSpinning: false })),
         roundWinner: data.winner,
       }));
-      // Optionally highlight the winner
+      // Set winner index from server winner
+      const winnerIdx = data.players.findIndex(p => p.id === data.winner.id);
+      setWinnerIndex(winnerIdx);
+      setSpinning(false);
     });
 
     socket.on('game_over', (data: { players: Player[]; winners: Player[] }) => {
@@ -102,7 +104,7 @@ export const Game = () => {
     });
 
     socket.on('connect_error', () => {
-      setError('Failed to connect to the game server');
+      setGameError('Failed to connect to the game server');
     });
 
     return () => {
@@ -125,7 +127,7 @@ export const Game = () => {
     if (socket) {
       socket.emit('start_game', (response: { success: boolean; message?: string }) => {
         if (!response.success) {
-          setError(response.message || 'Failed to start game');
+          setGameError(response.message || 'Failed to start game');
         }
       });
     }
@@ -134,14 +136,11 @@ export const Game = () => {
   const handleSpinEnd = (winnerIdx: number) => {
     setSpinning(false);
     setWinnerIndex(null);
-    // Inform backend of the winner
-    if (socket && gameState.players[winnerIdx]) {
-      socket.emit('round_result', { winner: gameState.players[winnerIdx] });
-    }
+    // Server already handles winner selection and emission
   };
 
   if (!isConnected) {
-    return <JoinGame onJoin={connect} />;
+    return <TelegramLogin />;
   }
 
   const getStatusMessage = () => {
@@ -178,12 +177,17 @@ export const Game = () => {
         <h1 className="text-3xl font-bold text-gray-800">Multi-Round Game</h1>
         <div className="text-sm text-gray-600">
           Players: {gameState.players.length}/4
+          {telegramUser && (
+            <span className="ml-2 text-blue-600">
+              • You: {telegramUser.first_name}
+            </span>
+          )}
         </div>
       </div>
       
-      {error && (
+      {gameError && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+          {gameError}
         </div>
       )}
 
@@ -205,8 +209,8 @@ export const Game = () => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <PlayerList players={gameState.players} currentPlayerId={currentPlayerId} />
-        <GameStatus gameState={gameState} onStartGame={handleStartGame} socket={socket} error={error} />
+        <PlayerList players={gameState.players} currentPlayerId={currentPlayerId || ''} />
+        <GameStatus gameState={gameState} onStartGame={handleStartGame} socket={socket} error={gameError} />
       </div>
     </div>
   );

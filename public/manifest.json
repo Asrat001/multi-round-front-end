@@ -1,0 +1,12 @@
+{
+  "url": "https://your-domain.com/multi-round-game",
+  "name": "Multi-Round Game",
+  "iconUrl": "https://your-domain.com/icon-192x192.png",
+  "description": "A fun multiplayer spinning wheel game for Telegram",
+  "screenshots": [
+    {
+      "url": "https://your-domain.com/screenshot1.png",
+      "size": "640x1136"
+    }
+  ]
+}
