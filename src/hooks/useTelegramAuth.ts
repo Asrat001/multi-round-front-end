@@ -23,68 +23,70 @@ export const useTelegramAuth = (): TelegramAuth => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log("🔍 useTelegramAuth: Starting authentication check");
-    console.log("🔍 useTelegramAuth: window.Telegram exists:", !!window.Telegram?.WebApp);
+    console.log('[useTelegramAuth] Initializing Telegram authentication');
 
-    const checkTelegramAuth = () => {
-      try {
-        // Check if running in Telegram Mini App
-        if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
-          const tg = window.Telegram.WebApp;
-          console.log("🔍 useTelegramAuth: Telegram WebApp found");
-          console.log("🔍 useTelegramAuth: initDataUnsafe exists:", !!tg.initDataUnsafe);
-          console.log("🔍 useTelegramAuth: user data:", tg.initDataUnsafe?.user?.username);
+    const initializeAuth = () => {
+      console.log('[useTelegramAuth] Checking Telegram WebApp:', {
+        telegramWebAppAvailable: !!window.Telegram?.WebApp,
+        initDataUnsafe: window.Telegram?.WebApp?.initDataUnsafe,
+        userData: window.Telegram?.WebApp?.initDataUnsafe?.user,
+        timestamp: new Date().toISOString(),
+      });
 
-          // Check if we have user data
-          if (tg.initDataUnsafe?.user) {
-            console.log("✅ useTelegramAuth: User found, setting authenticated");
-            setUser(tg.initDataUnsafe.user as TelegramUser);
-            setIsAuthenticated(true);
-          } else {
-            console.log("❌ useTelegramAuth: No user data in Telegram");
-            setError('No Telegram user data available. Please open this app through Telegram.');
-          }
-        } else {
-          console.log("❌ useTelegramAuth: Not in Telegram Mini App");
-          // Check if we're in development or direct browser access
-          const urlParams = new URLSearchParams(window.location.search);
-          const isDevMode = urlParams.get('dev') === 'true';
-          console.log("🔍 useTelegramAuth: Dev mode check:", isDevMode);
+      // Check for Telegram user
+      if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
+        const tg = window.Telegram.WebApp;
+        const tgUser = tg.initDataUnsafe.user;
 
-          if (isDevMode) {
-            console.log("✅ useTelegramAuth: Dev mode, creating mock user");
-            // Development mode - create a mock user for testing
-            setUser({
-              id: 123456789,
-              first_name: 'Test',
-              last_name: 'User',
-              username: 'testuser',
-              language_code: 'en',
-              is_premium: false
-            });
-            setIsAuthenticated(true);
-          } else {
-            console.log("❌ useTelegramAuth: Not Telegram and not dev mode");
-            setError('This app must be opened through Telegram. Please use the Telegram bot to access this game.');
-          }
+        if (tgUser) {
+          console.log('[useTelegramAuth] Telegram user found:', {
+            id: tgUser.id,
+            username: tgUser.username,
+            first_name: tgUser.first_name,
+            timestamp: new Date().toISOString(),
+          });
+
+          setUser(tgUser as TelegramUser);
+          setIsAuthenticated(true);
+          setError(null);
         }
+      } else {
+        console.log('[useTelegramAuth] No Telegram user data found');
 
-        setIsReady(true);
-        console.log("✅ useTelegramAuth: Authentication check complete");
-      } catch (err) {
-        console.error('❌ useTelegramAuth: Error during auth:', err);
-        setError('Failed to initialize Telegram authentication');
-        setIsReady(true);
+        // Check if in development mode
+        const urlParams = new URLSearchParams(window.location.search);
+        const isDevMode = urlParams.get('dev') === 'true';
+
+        if (isDevMode) {
+          console.log('[useTelegramAuth] Development mode - creating mock user');
+          setUser({
+            id: 123456789,
+            first_name: 'Test',
+            last_name: 'User',
+            username: 'testuser',
+            language_code: 'en',
+            is_premium: false
+          });
+          setIsAuthenticated(true);
+        } else {
+          console.log('[useTelegramAuth] Not in Telegram and not dev mode');
+          setError('This app must be opened through Telegram. Please use the Telegram bot to access this game.');
+        }
       }
+
+      setIsReady(true);
+      console.log('[useTelegramAuth] Authentication check complete');
     };
 
-    // Initial check
-    checkTelegramAuth();
-
-    // Retry after delays in case Telegram WebApp loads slowly
-    setTimeout(checkTelegramAuth, 500);
-    setTimeout(checkTelegramAuth, 1000);
-    setTimeout(checkTelegramAuth, 2000);
+    // Use the same timing as the working codebase - 5 second delay for Telegram
+    if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
+      console.log('[useTelegramAuth] Telegram detected, waiting 5 seconds before auth check');
+      const timer = setTimeout(initializeAuth, 5000);
+      return () => clearTimeout(timer);
+    } else {
+      console.log('[useTelegramAuth] No Telegram detected, checking immediately');
+      initializeAuth();
+    }
   }, []);
 
   return {
