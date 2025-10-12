@@ -36,7 +36,24 @@ export const useTelegramAuth = (): TelegramAuth => {
           setError('No Telegram user data available. Please open this app through Telegram.');
         }
       } else {
-        setError('This app must be opened through Telegram. Please use the Telegram bot to access this game.');
+        // Check if we're in development or direct browser access
+        const urlParams = new URLSearchParams(window.location.search);
+        const isDevMode = urlParams.get('dev') === 'true';
+
+        if (isDevMode) {
+          // Development mode - create a mock user for testing
+          setUser({
+            id: 123456789,
+            first_name: 'Test',
+            last_name: 'User',
+            username: 'testuser',
+            language_code: 'en',
+            is_premium: false
+          });
+          setIsAuthenticated(true);
+        } else {
+          setError('This app must be opened through Telegram. Please use the Telegram bot to access this game.');
+        }
       }
 
       setIsReady(true);

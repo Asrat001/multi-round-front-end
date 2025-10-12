@@ -33,7 +33,11 @@ export const TelegramLogin = () => {
           <p className="text-sm mt-1">{authError}</p>
         </div>
         <p className="text-gray-600 text-sm">
-          Please make sure you're opening this app through Telegram.
+          Please make sure you're opening this app through Telegram bot menu.
+          <br />
+          <span className="text-xs text-gray-500 mt-2 block">
+            For development: Add ?dev=true to URL
+          </span>
         </p>
       </div>
     );
