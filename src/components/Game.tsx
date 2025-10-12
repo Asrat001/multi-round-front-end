@@ -44,7 +44,6 @@ export const Game = () => {
 
   useEffect(() => {
     if (!socket) return;
-
     socket.on('player_update', (data: { players: Player[] }) => {
       setGameState(prev => ({ ...prev, players: data.players }));
       setGameError('');
@@ -53,7 +52,6 @@ export const Game = () => {
     socket.on('player_left', (data: { name: string }) => {
       toast(`${data.name} has left the game.`, { icon: '👋', className: 'toast' });
     });
-
     socket.on('game_start', (data: { totalRounds: number }) => {
       setGameState(prev => ({
         ...prev,

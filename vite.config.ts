@@ -9,7 +9,4 @@ export default defineConfig({
     tailwindcss(),
 
   ],
-  optimizeDeps: {
-    include: ['spin-wheel-game']
-  }
 })

@@ -13,7 +13,7 @@ function App() {
       // Expand the app to full height
       tg.expand();
       // Show back button if needed
-      tg.BackButton.hide();
+      tg.BackButton.show();
       // Handle theme changes
       tg.onEvent('themeChanged', () => {
         // Theme changed, you can update your app colors here if needed

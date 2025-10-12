@@ -1,5 +1,5 @@
 {
-  "url": "https://multi-round-front-end.vercel.app/",
+  "url": "https://multi-round-front-end.vercel.app/?dev=true",
   "name": "Multi-Round Game",
   "iconUrl": "https://multi-round-front-end.vercel.app/icon-192x192.png",
   "description": "A fun multiplayer spinning wheel game for Telegram",

@@ -16,6 +16,7 @@ export const TelegramLogin = () => {
     }
   }, [isReady, isAuthenticated, user, isConnected, connect]);
 
+  // Show loading while initializing
   if (!isReady) {
     return (
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 text-center">
@@ -25,6 +26,7 @@ export const TelegramLogin = () => {
     );
   }
 
+  // Show error if authentication failed
   if (authError) {
     return (
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 text-center">
@@ -34,15 +36,12 @@ export const TelegramLogin = () => {
         </div>
         <p className="text-gray-600 text-sm">
           Please make sure you're opening this app through Telegram bot menu.
-          <br />
-          <span className="text-xs text-gray-500 mt-2 block">
-            For development: Add ?dev=true to URL
-          </span>
         </p>
       </div>
     );
   }
 
+  // Show authenticated user with connection status
   if (isAuthenticated && user) {
     return (
       <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-6 text-center">
@@ -58,11 +57,14 @@ export const TelegramLogin = () => {
           )}
         </div>
 
-        {!isConnected && !socketError && (
+        {/* Show connection status */}
+        {isConnected ? (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+            <p className="font-semibold">✅ Connected to Game Server</p>
+          </div>
+        ) : !socketError ? (
           <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
-        )}
-
-        {socketError && (
+        ) : (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mt-4">
             <p className="font-semibold">Connection Error</p>
             <p className="text-sm">{socketError}</p>
