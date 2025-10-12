@@ -28,6 +28,7 @@ declare global {
           button_text_color: string;
         };
         isExpanded: boolean;
+        isReady: boolean;
         viewportHeight: number;
         viewportStableHeight: number;
         headerColor: string;
