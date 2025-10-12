@@ -10,7 +10,8 @@ export const TelegramLogin = () => {
   useEffect(() => {
     if (isReady && isAuthenticated && user && !isConnected) {
       // Auto-connect when Telegram auth is ready and user is authenticated
-      connect(user);
+      const playerName = user.username || `${user.first_name}${user.last_name ? ` ${user.last_name}` : ''}`;
+      connect(playerName);
       toast.success(`Welcome, ${user.first_name}!`);
     }
   }, [isReady, isAuthenticated, user, isConnected, connect]);

@@ -133,7 +133,7 @@ export const Game = () => {
     }
   };
 
-  const handleSpinEnd = (winnerIdx: number) => {
+  const handleSpinEnd = () => {
     setSpinning(false);
     setWinnerIndex(null);
     // Server already handles winner selection and emission

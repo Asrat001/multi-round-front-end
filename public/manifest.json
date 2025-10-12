@@ -1,11 +1,11 @@
 {
-  "url": "https://your-domain.com/multi-round-game",
+  "url": "https://multi-round-front-end.vercel.app/",
   "name": "Multi-Round Game",
-  "iconUrl": "https://your-domain.com/icon-192x192.png",
+  "iconUrl": "https://multi-round-front-end.vercel.app/icon-192x192.png",
   "description": "A fun multiplayer spinning wheel game for Telegram",
   "screenshots": [
     {
-      "url": "https://your-domain.com/screenshot1.png",
+      "url": "https://multi-round-front-end.vercel.app/screenshot1.png",
       "size": "640x1136"
     }
   ]
