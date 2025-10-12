@@ -27,7 +27,7 @@ interface GameState {
 const COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5', '#9B59B6', '#3498DB'];
 
 export const GamePage = () => {
-  const { socket, isConnected, currentPlayerId, telegramUser, error, connect } = useSocket();
+  const { socket, isConnected, currentPlayerId, telegramUser, connect } = useSocket();
   const { user } = useTelegramAuth();
   const [gameState, setGameState] = useState<GameState>({
     players: [],
