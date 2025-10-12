@@ -38,7 +38,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const connect = (playerName: string) => {
     console.log('Attempting to connect to backend with playerName:', playerName);
 
-    const newSocket = io('http://localhost:4000', {
+    const newSocket = io('https://multi-round-point-backend.onrender.com/', {
       query: { playerName },
       transports: ['websocket', 'polling'],
       reconnection: true,

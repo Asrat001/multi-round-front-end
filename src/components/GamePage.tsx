@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSocket } from '../contexts/SocketContext';
-import { TelegramLogin } from './TelegramLogin';
+import { useTelegramAuth } from '../hooks/useTelegramAuth';
 import { SvgSpinnerWheel } from './SvgSpinnerWheel';
 import toast, { Toaster } from 'react-hot-toast';
 import Confetti from 'react-confetti';
@@ -26,8 +26,9 @@ interface GameState {
 
 const COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEEAD', '#D4A5A5', '#9B59B6', '#3498DB'];
 
-export const Game = () => {
-  const { socket, isConnected, currentPlayerId, telegramUser } = useSocket();
+export const GamePage = () => {
+  const { socket, isConnected, currentPlayerId, telegramUser, error, connect } = useSocket();
+  const { user } = useTelegramAuth();
   const [gameState, setGameState] = useState<GameState>({
     players: [],
     isGameActive: false,
@@ -43,7 +44,16 @@ export const Game = () => {
   const [windowSize, setWindowSize] = useState({ width: window.innerWidth, height: window.innerHeight });
 
   useEffect(() => {
+    if (user && !isConnected) {
+      // Connect to socket when GamePage loads and user is available
+      const playerName = user.username || `${user.first_name}${user.last_name ? ` ${user.last_name}` : ''}`;
+      connect(playerName);
+    }
+  }, [user, isConnected, connect]);
+
+  useEffect(() => {
     if (!socket) return;
+
     socket.on('player_update', (data: { players: Player[] }) => {
       setGameState(prev => ({ ...prev, players: data.players }));
       setGameError('');
@@ -52,6 +62,7 @@ export const Game = () => {
     socket.on('player_left', (data: { name: string }) => {
       toast(`${data.name} has left the game.`, { icon: '👋', className: 'toast' });
     });
+
     socket.on('game_start', (data: { totalRounds: number }) => {
       setGameState(prev => ({
         ...prev,
@@ -113,7 +124,7 @@ export const Game = () => {
       socket.off('game_over');
       socket.off('connect_error');
     };
-  }, [socket, gameState.players.length]);
+  }, [socket]);
 
   useEffect(() => {
     const handleResize = () => setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -136,10 +147,6 @@ export const Game = () => {
     setWinnerIndex(null);
     // Server already handles winner selection and emission
   };
-
-  if (!isConnected) {
-    return <TelegramLogin />;
-  }
 
   const getStatusMessage = () => {
     switch (gameState.gameStatus) {
@@ -182,7 +189,7 @@ export const Game = () => {
           )}
         </div>
       </div>
-      
+
       {gameError && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
           {gameError}
@@ -212,4 +219,4 @@ export const Game = () => {
       </div>
     </div>
   );
-}; 
+};
