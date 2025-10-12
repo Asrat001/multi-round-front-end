@@ -13,7 +13,7 @@ interface SocketContextType {
   isConnected: boolean;
   currentPlayerId: string | null;
   telegramUser: TelegramUser | null;
-  connect: (telegramUser: TelegramUser) => void;
+  connect: (playerName: string) => void;
   disconnect: () => void;
   error: string | null;
 }

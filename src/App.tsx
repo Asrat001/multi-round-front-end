@@ -7,17 +7,13 @@ function App() {
   useEffect(() => {
     if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
       const tg = window.Telegram.WebApp;
-
       // Set theme colors
       tg.setHeaderColor('#ffffff');
       tg.setBackgroundColor('#f9fafb');
-
       // Expand the app to full height
       tg.expand();
-
       // Show back button if needed
       tg.BackButton.hide();
-
       // Handle theme changes
       tg.onEvent('themeChanged', () => {
         // Theme changed, you can update your app colors here if needed
